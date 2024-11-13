@@ -1,3 +1,9 @@
+# Mike's Config Notes
+
+## Extra things to install
+- nerd font
+- vscode-debugger: https://github.com/mxsdev/nvim-dap-vscode-js
+
 # kickstart.nvim
 
 ## Introduction
