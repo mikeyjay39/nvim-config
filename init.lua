@@ -203,6 +203,9 @@ vim.keymap.set("n", "<C-k>", "<C-w><C-k>", { desc = "Move focus to the upper win
 -- Jester Keymaps
 -- vim.keymap.set("<F9>", require("jester").debug(), "<F9> Debug Jest Test under cursor")
 -- vim.keymap.set("<F10>", require("jester").run(), "<F10> Run Jest Test under cursor")
+-- Bind Jester's debug function to a key, e.g., <leader>d
+vim.api.nvim_set_keymap("n", "<F9>", ":lua require('jester').debug()<CR>", { noremap = true, silent = true })
+vim.api.nvim_set_keymap("n", "<F10>", ":lua require('jester').run()<CR>", { noremap = true, silent = true })
 
 -- [[ Basic Autocommands ]]
 --  See `:help lua-guide-autocommands`
@@ -283,6 +286,9 @@ require("lazy").setup({
 		"David-Kunz/jester",
 		dedependencies = { "nvim-treesitter.nvim", "nvim-dap.nvim" },
 		opts = {
+			cmd = "./node_modules/jest/bin/jest.js --config=./jest.config.js -t '$result' $file", -- run command
+			escapeRegex = false,
+			identifiers = { "test", "it" }, -- used to identify tests
 			path_to_jest_run = "/home/mikeyjay/omskit/node_modules/jest/bin/jest.js",
 
 			path_to_jest_debug = "/home/mikeyjay/vscode-js-debug", -- Path to vscode-js-debug installation.
