@@ -167,6 +167,12 @@ vim.opt.shiftwidth = 2
 vim.opt.softtabstop = 2
 vim.opt.shiftwidth = 2
 
+-- Folding
+-- zR opens all folds
+-- zM closes all folds
+vim.opt.foldmethod = "indent"
+vim.opt.foldlevel = 1
+
 -- [[ Basic Keymaps ]]
 --  See `:help vim.keymap.set()`
 
