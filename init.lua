@@ -172,6 +172,8 @@ vim.opt.shiftwidth = 2
 -- zM closes all folds
 vim.opt.foldmethod = "indent"
 vim.opt.foldlevel = 1
+-- automatically folds everything when opening a file
+vim.opt.foldclose=all
 
 -- [[ Basic Keymaps ]]
 --  See `:help vim.keymap.set()`
