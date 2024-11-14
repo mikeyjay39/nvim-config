@@ -171,9 +171,9 @@ vim.opt.shiftwidth = 2
 -- zR opens all folds
 -- zM closes all folds
 vim.opt.foldmethod = "indent"
-vim.opt.foldlevel = 1
+vim.opt.foldlevel = 9999
 -- automatically folds everything when opening a file
-vim.opt.foldclose=all
+-- vim.opt.foldclose = all
 
 -- [[ Basic Keymaps ]]
 --  See `:help vim.keymap.set()`
@@ -214,6 +214,8 @@ vim.keymap.set("n", "<C-k>", "<C-w><C-k>", { desc = "Move focus to the upper win
 -- Bind Jester's debug function to a key, e.g., <leader>d
 vim.api.nvim_set_keymap("n", "<F9>", ":lua require('jester').debug()<CR>", { noremap = true, silent = true })
 vim.api.nvim_set_keymap("n", "<F10>", ":lua require('jester').run()<CR>", { noremap = true, silent = true })
+vim.api.nvim_set_keymap("n", "<F21>", ":lua require('jester').debug_last()<CR>", { noremap = true, silent = true })
+vim.api.nvim_set_keymap("n", "<F22>", ":lua require('jester').run_last()<CR>", { noremap = true, silent = true })
 
 -- [[ Basic Autocommands ]]
 --  See `:help lua-guide-autocommands`
@@ -1028,7 +1030,7 @@ require("lazy").setup({
 	-- require 'kickstart.plugins.lint',
 	-- require 'kickstart.plugins.autopairs',
 	require("kickstart.plugins.neo-tree"),
-	-- require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps
+	require("kickstart.plugins.gitsigns"), -- adds gitsigns recommend keymaps
 
 	-- NOTE: The import below can automatically add your own plugins, configuration, etc from `lua/custom/plugins/*.lua`
 	--    This is the easiest way to modularize your config.
