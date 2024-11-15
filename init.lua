@@ -84,6 +84,13 @@ I hope you enjoy your Neovim journey,
 P.S. You can delete this when you're done too. It's your config now! :)
 --]]
 
+--  NOTE: These are notes
+-- ctrl-q puts you in vertical / block visual mode
+-- to insert vertical text press shift + i
+-- then pres Esc twice to apply it
+-- https://stackoverflow.com/a/12399573
+--
+--
 -- Set <space> as the leader key
 -- See `:help mapleader`
 --  NOTE: Must happen before plugins are loaded (otherwise wrong leader will be used)
