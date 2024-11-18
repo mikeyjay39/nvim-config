@@ -224,6 +224,31 @@ vim.api.nvim_set_keymap("n", "<F10>", ":lua require('jester').run()<CR>", { nore
 vim.api.nvim_set_keymap("n", "<F21>", ":lua require('jester').debug_last()<CR>", { noremap = true, silent = true })
 vim.api.nvim_set_keymap("n", "<F22>", ":lua require('jester').run_last()<CR>", { noremap = true, silent = true })
 
+-- telescope-dap bindings
+vim.api.nvim_set_keymap(
+	"n",
+	"<F4>",
+	":lua require('telescope').extensions.dap.commands()<CR>",
+	{ noremap = true, silent = true }
+)
+vim.api.nvim_set_keymap(
+	"n",
+	"<F6>",
+	":lua require('telescope').extensions.dap.frames()<CR>",
+	{ noremap = true, silent = true }
+)
+
+-- Auto organize imports on save
+vim.api.nvim_create_autocmd("BufWritePre", {
+	group = vim.api.nvim_create_augroup("TS_add_missing_imports", { clear = true }),
+	desc = "TS_add_missing_imports",
+	pattern = { "*.ts", "*.tsx", "*.js", "*.jsx" },
+	callback = function()
+		vim.cmd([[TSToolsAddMissingImports]])
+		vim.cmd("write")
+	end,
+})
+
 -- [[ Basic Autocommands ]]
 --  See `:help lua-guide-autocommands`
 
@@ -331,6 +356,9 @@ require("lazy").setup({
 				internalConsoleOptions = "neverOpen",
 			},
 		},
+	},
+	{
+		"nvim-telescope/telescope-dap.nvim",
 	},
 
 	-- NOTE: Plugins can also be configured to run Lua code when they are loaded.
