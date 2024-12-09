@@ -216,13 +216,11 @@ vim.keymap.set("n", "<C-j>", "<C-w><C-j>", { desc = "Move focus to the lower win
 vim.keymap.set("n", "<C-k>", "<C-w><C-k>", { desc = "Move focus to the upper window" })
 
 -- Jester Keymaps
--- vim.keymap.set("<F9>", require("jester").debug(), "<F9> Debug Jest Test under cursor")
--- vim.keymap.set("<F10>", require("jester").run(), "<F10> Run Jest Test under cursor")
 -- Bind Jester's debug function to a key, e.g., <leader>d
-vim.api.nvim_set_keymap("n", "<F9>", ":lua require('jester').debug()<CR>", { noremap = true, silent = true })
-vim.api.nvim_set_keymap("n", "<F10>", ":lua require('jester').run()<CR>", { noremap = true, silent = true })
-vim.api.nvim_set_keymap("n", "<F21>", ":lua require('jester').debug_last()<CR>", { noremap = true, silent = true })
-vim.api.nvim_set_keymap("n", "<F22>", ":lua require('jester').run_last()<CR>", { noremap = true, silent = true })
+-- vim.api.nvim_set_keymap("n", "<F9>", ":lua require('jester').debug()<CR>", { noremap = true, silent = true })
+-- vim.api.nvim_set_keymap("n", "<F10>", ":lua require('jester').run()<CR>", { noremap = true, silent = true })
+-- vim.api.nvim_set_keymap("n", "<F21>", ":lua require('jester').debug_last()<CR>", { noremap = true, silent = true })
+-- vim.api.nvim_set_keymap("n", "<F22>", ":lua require('jester').run_last()<CR>", { noremap = true, silent = true })
 
 -- telescope-dap bindings
 vim.api.nvim_set_keymap(
@@ -325,38 +323,127 @@ require("lazy").setup({
 		opts = {},
 	},
 	{
-		"David-Kunz/jester",
-		dedependencies = { "nvim-treesitter.nvim", "nvim-dap.nvim" },
-		opts = {
-			cmd = "./node_modules/jest/bin/jest.js --config=./jest.config.js -t '$result' $file", -- run command
-			escapeRegex = false,
-			identifiers = { "test", "it" }, -- used to identify tests
-			path_to_jest_run = "/home/mikeyjay/omskit/node_modules/jest/bin/jest.js",
-
-			path_to_jest_debug = "/home/mikeyjay/vscode-js-debug", -- Path to vscode-js-debug installation.
-			dap = {
-				type = "pwa-node",
-				request = "launch",
-				name = "Debug Jest Tests",
-				-- trace = true, -- include debugger info
-				runtimeExecutable = "node",
-				runtimeArgs = {
-					"./node_modules/jest/bin/jest.js",
-					"--config=jest.config.js",
-					"--runInBand",
-					"-t",
-					"$result",
-					"--",
-					"$file",
-				},
-				sourceMaps = true,
-				rootPath = "/home/mikeyjay/omskit",
-				cwd = vim.fn.getcwd(),
-				console = "integratedTerminal",
-				internalConsoleOptions = "neverOpen",
+		"nvim-neotest/neotest",
+		dependencies = {
+			"nvim-neotest/nvim-nio",
+			"nvim-neotest/neotest-jest",
+			"nvim-lua/plenary.nvim",
+			"antoinemadec/FixCursorHold.nvim",
+			"nvim-treesitter/nvim-treesitter",
+		},
+		keys = {
+			{ "<leader>t", "", desc = "+test" },
+			{
+				"<leader>tt",
+				function()
+					require("neotest").run.run(vim.fn.expand("%"))
+				end,
+				desc = "Run File (Neotest)",
+			},
+			{
+				"<leader>tT",
+				function()
+					require("neotest").run.run(vim.uv.cwd())
+				end,
+				desc = "Run All Test Files (Neotest)",
+			},
+			{
+				"<leader>tr",
+				function()
+					require("neotest").run.run()
+				end,
+				desc = "Run Nearest (Neotest)",
+			},
+			{
+				"<leader>tl",
+				function()
+					require("neotest").run.run_last()
+				end,
+				desc = "Run Last (Neotest)",
+			},
+			{
+				"<leader>ts",
+				function()
+					require("neotest").summary.toggle()
+				end,
+				desc = "Toggle Summary (Neotest)",
+			},
+			{
+				"<leader>to",
+				function()
+					require("neotest").output.open({ enter = true, auto_close = true })
+				end,
+				desc = "Show Output (Neotest)",
+			},
+			{
+				"<leader>tO",
+				function()
+					require("neotest").output_panel.toggle()
+				end,
+				desc = "Toggle Output Panel (Neotest)",
+			},
+			{
+				"<leader>tS",
+				function()
+					require("neotest").run.stop()
+				end,
+				desc = "Stop (Neotest)",
+			},
+			{
+				"<leader>tw",
+				function()
+					require("neotest").watch.toggle(vim.fn.expand("%"))
+				end,
+				desc = "Toggle Watch (Neotest)",
 			},
 		},
+		config = function()
+			require("neotest").setup({
+				adapters = {
+					require("neotest-jest")({
+						jestCommand = "./node_modules/jest/bin/jest.js",
+						jestConfigFile = "./jest.config.js",
+						env = { CI = true },
+						cwd = function(path)
+							return vim.fn.getcwd()
+						end,
+					}),
+				},
+			})
+		end,
 	},
+	-- {
+	-- 	"David-Kunz/jester",
+	-- 	dedependencies = { "nvim-treesitter.nvim", "nvim-dap.nvim" },
+	-- 	opts = {
+	-- 		cmd = "./node_modules/jest/bin/jest.js --config=./jest.config.js -t '$result' $file", -- run command
+	-- 		escapeRegex = false,
+	-- 		identifiers = { "test", "it" }, -- used to identify tests
+	-- 		path_to_jest_run = "/home/mikeyjay/omskit/node_modules/jest/bin/jest.js",
+	--
+	-- 		path_to_jest_debug = "/home/mikeyjay/vscode-js-debug", -- Path to vscode-js-debug installation.
+	-- 		dap = {
+	-- 			type = "pwa-node",
+	-- 			request = "launch",
+	-- 			name = "Debug Jest Tests",
+	-- 			-- trace = true, -- include debugger info
+	-- 			runtimeExecutable = "node",
+	-- 			args = { "--no-cache" },
+	-- 			runtimeArgs = {
+	-- 				"./node_modules/jest/bin/jest.js",
+	-- 				"--config=./jest.config.js",
+	-- 				"-t",
+	-- 				"$result",
+	-- 				"$file",
+	-- 			},
+	-- 			sourceMaps = true,
+	-- 			rootPath = "/home/mikeyjay/omskit",
+	-- 			cwd = vim.fn.getcwd(),
+	-- 			console = "integratedTerminal",
+	-- 			internalConsoleOptions = "neverOpen",
+	-- 		},
+	-- 	},
+	-- },
 	{
 		"nvim-telescope/telescope-dap.nvim",
 	},
@@ -424,7 +511,7 @@ require("lazy").setup({
 				{ "<leader>r", group = "[R]ename" },
 				{ "<leader>s", group = "[S]earch" },
 				{ "<leader>w", group = "[W]orkspace" },
-				{ "<leader>t", group = "[T]oggle" },
+				-- { "<leader>t", group = "[T]oggle" },
 				{ "<leader>h", group = "Git [H]unk", mode = { "n", "v" } },
 			},
 		},

@@ -28,6 +28,13 @@ return {
 		local dap = require("dap")
 		local dapui = require("dapui")
 		return {
+			{
+				"<leader>td",
+				function()
+					require("neotest").run.run({ strategy = "dap" })
+				end,
+				desc = "Debug Nearest",
+			},
 			-- Basic debugging keymaps, feel free to change to your liking!
 			{ "<F5>", dap.continue, desc = "Debug: Start/Continue" },
 			{ "<F1>", dap.step_into, desc = "Debug: Step Into" },
@@ -64,7 +71,9 @@ return {
 			ensure_installed = {
 				-- Update this to ensure that you have the debuggers for the langs you want
 				"delve",
-				"node2",
+				-- "node2",
+				"pwa-node",
+				"neotest,",
 			},
 		})
 
@@ -144,30 +153,30 @@ return {
 				},
 			}
 		end
-
-		dap.adapters.node2 = {
-			type = "executable",
-			command = "node",
-			args = { "/home/mikeyjay/dev/microsoft/vscode-node-debug2/out/src/nodeDebug.js" },
-		}
-		dap.configurations.javascript = {
-			{
-				name = "Launch",
-				type = "node2",
-				request = "launch",
-				program = "${file}",
-				cwd = "/home/mikeyjay/omskit",
-				sourceMaps = true,
-				protocol = "inspector",
-				console = "integratedTerminal",
-			},
-			{
-				-- For this to work you need to make sure the node process is started with the `--inspect` flag.
-				name = "Attach to process",
-				type = "node2",
-				request = "attach",
-				processId = require("dap.utils").pick_process,
-			},
-		}
+		--
+		-- dap.adapters.node2 = {
+		-- 	type = "executable",
+		-- 	command = "node",
+		-- 	args = { "/home/mikeyjay/dev/microsoft/vscode-node-debug2/out/src/nodeDebug.js" },
+		-- }
+		-- dap.configurations.javascript = {
+		-- 	{
+		-- 		name = "Launch",
+		-- 		type = "node2",
+		-- 		request = "launch",
+		-- 		program = "${file}",
+		-- 		cwd = "/home/mikeyjay/omskit",
+		-- 		sourceMaps = true,
+		-- 		protocol = "inspector",
+		-- 		console = "integratedTerminal",
+		-- 	},
+		-- 	{
+		-- 		-- For this to work you need to make sure the node process is started with the `--inspect` flag.
+		-- 		name = "Attach to process",
+		-- 		type = "node2",
+		-- 		request = "attach",
+		-- 		processId = require("dap.utils").pick_process,
+		-- 	},
+		-- }
 	end,
 }
