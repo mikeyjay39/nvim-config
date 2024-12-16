@@ -239,6 +239,10 @@ vim.api.nvim_create_user_command("CoverageToggle", function()
 	require("coverage").toggle()
 end, { desc = "Toggle coverage highlights" })
 
+vim.api.nvim_create_user_command("CoverageSummary", function()
+	require("coverage").summary()
+end, { desc = "Toggle coverage summary" })
+
 -- Keybinding to load coverage data
 vim.api.nvim_set_keymap(
 	"n", -- Normal mode
@@ -268,6 +272,14 @@ vim.api.nvim_set_keymap(
 	"n",
 	"<leader>Ct", -- Keybinding: <leader>ct (Coverage Toggle)
 	":CoverageToggle<CR>",
+	{ noremap = true, silent = true }
+)
+
+-- Keybinding to toggle coverage highlights
+vim.api.nvim_set_keymap(
+	"n",
+	"<leader>CS", -- Keybinding: <leader>CS (Coverage Summary)
+	":CoverageSummary<CR>",
 	{ noremap = true, silent = true }
 )
 
@@ -500,6 +512,11 @@ require("lazy").setup({
 		requires = { "nvim-lua/plenary.nvim" },
 		config = function()
 			require("coverage").setup({
+				highlights = {
+					covered = { fg = "LightGreen" }, -- supports style, fg, bg, sp (see :h highlight-gui)
+					uncovered = { fg = "DarkRed" },
+					partial = { fg = "Blue" },
+				},
 				lang = {
 					typescript = {
 						coverage_file = "coverage/coverage-final.json",
