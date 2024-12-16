@@ -222,6 +222,55 @@ vim.keymap.set("n", "<C-k>", "<C-w><C-k>", { desc = "Move focus to the upper win
 -- vim.api.nvim_set_keymap("n", "<F21>", ":lua require('jester').debug_last()<CR>", { noremap = true, silent = true })
 -- vim.api.nvim_set_keymap("n", "<F22>", ":lua require('jester').run_last()<CR>", { noremap = true, silent = true })
 
+-- nvim-coverage bindings
+vim.api.nvim_create_user_command("CoverageLoad", function()
+	require("coverage").load()
+end, { desc = "Load coverage data" })
+
+vim.api.nvim_create_user_command("CoverageShow", function()
+	require("coverage").show()
+end, { desc = "Show coverage highlights" })
+
+vim.api.nvim_create_user_command("CoverageHide", function()
+	require("coverage").hide()
+end, { desc = "Hide coverage highlights" })
+
+vim.api.nvim_create_user_command("CoverageToggle", function()
+	require("coverage").toggle()
+end, { desc = "Toggle coverage highlights" })
+
+-- Keybinding to load coverage data
+vim.api.nvim_set_keymap(
+	"n", -- Normal mode
+	"<leader>Cl", -- Keybinding: <leader>cl (Coverage Load)
+	":CoverageLoad<CR>", -- Command to execute
+	{ noremap = true, silent = true } -- Options: non-recursive and silent
+)
+
+-- Keybinding to show coverage highlights
+vim.api.nvim_set_keymap(
+	"n",
+	"<leader>Cs", -- Keybinding: <leader>cs (Coverage Show)
+	":CoverageShow<CR>",
+	{ noremap = true, silent = true }
+)
+
+-- Keybinding to hide coverage highlights
+vim.api.nvim_set_keymap(
+	"n",
+	"<leader>Ch", -- Keybinding: <leader>ch (Coverage Hide)
+	":CoverageHide<CR>",
+	{ noremap = true, silent = true }
+)
+
+-- Keybinding to toggle coverage highlights
+vim.api.nvim_set_keymap(
+	"n",
+	"<leader>Ct", -- Keybinding: <leader>ct (Coverage Toggle)
+	":CoverageToggle<CR>",
+	{ noremap = true, silent = true }
+)
+
 -- telescope-dap bindings
 vim.api.nvim_set_keymap(
 	"n",
@@ -355,12 +404,46 @@ require("lazy").setup({
 				desc = "Run Nearest (Neotest)",
 			},
 			{
-				"<leader>tl",
+				"<leader>tC",
 				function()
-					require("neotest").run.run_last()
+					require("neotest").run.run({
+						jestCommand = "/home/mikeyjay/omskit/node_modules/jest/bin/jest.js --coverage --config=/home/mikeyjay/omskit/jest.config.js --",
+						suite = false,
+					})
 				end,
-				desc = "Run Last (Neotest)",
+				desc = "Run With Coverage On File (Neotest)",
 			},
+			-- {
+			-- 	"<leader>tC",
+			-- 	function()
+			-- 		require("neotest").run.run({
+			-- 			jestCommand = "/home/mikeyjay/omskit/node_modules/jest/bin/jest.js --coverage",
+			-- 			suite = false,
+			-- 		})
+			-- 	end,
+			-- 	desc = "Run Nearest With Coverage (Neotest)",
+			-- },
+			-- {
+			-- 	"<leader>tC",
+			-- 	function()
+			-- 		require("neotest").run.run({
+			-- 			extra_args = {
+			-- 				"--coverage=true",
+			-- 				"--config=/home/mikeyjay/omskit/jest.config.js",
+			-- 				"--",
+			-- 			},
+			-- 			suite = false,
+			-- 		})
+			-- 	end,
+			-- 	desc = "Run Nearest With Coverage (Neotest)",
+			-- },
+			-- {
+			-- 	"<leader>tl",
+			-- 	function()
+			-- 		require("neotest").run.run_last()
+			-- 	end,
+			-- 	desc = "Run Last (Neotest)",
+			-- },
 			{
 				"<leader>ts",
 				function()
@@ -402,7 +485,7 @@ require("lazy").setup({
 				adapters = {
 					require("neotest-jest")({
 						jestCommand = "./node_modules/jest/bin/jest.js",
-						jestConfigFile = "./jest.config.js",
+						jestConfigFile = "/home/mikeyjay/omskit/jest.config.js",
 						env = { CI = true },
 						cwd = function(path)
 							return vim.fn.getcwd()
@@ -412,38 +495,19 @@ require("lazy").setup({
 			})
 		end,
 	},
-	-- {
-	-- 	"David-Kunz/jester",
-	-- 	dedependencies = { "nvim-treesitter.nvim", "nvim-dap.nvim" },
-	-- 	opts = {
-	-- 		cmd = "./node_modules/jest/bin/jest.js --config=./jest.config.js -t '$result' $file", -- run command
-	-- 		escapeRegex = false,
-	-- 		identifiers = { "test", "it" }, -- used to identify tests
-	-- 		path_to_jest_run = "/home/mikeyjay/omskit/node_modules/jest/bin/jest.js",
-	--
-	-- 		path_to_jest_debug = "/home/mikeyjay/vscode-js-debug", -- Path to vscode-js-debug installation.
-	-- 		dap = {
-	-- 			type = "pwa-node",
-	-- 			request = "launch",
-	-- 			name = "Debug Jest Tests",
-	-- 			-- trace = true, -- include debugger info
-	-- 			runtimeExecutable = "node",
-	-- 			args = { "--no-cache" },
-	-- 			runtimeArgs = {
-	-- 				"./node_modules/jest/bin/jest.js",
-	-- 				"--config=./jest.config.js",
-	-- 				"-t",
-	-- 				"$result",
-	-- 				"$file",
-	-- 			},
-	-- 			sourceMaps = true,
-	-- 			rootPath = "/home/mikeyjay/omskit",
-	-- 			cwd = vim.fn.getcwd(),
-	-- 			console = "integratedTerminal",
-	-- 			internalConsoleOptions = "neverOpen",
-	-- 		},
-	-- 	},
-	-- },
+	{
+		"andythigpen/nvim-coverage",
+		requires = { "nvim-lua/plenary.nvim" },
+		config = function()
+			require("coverage").setup({
+				lang = {
+					typescript = {
+						coverage_file = "coverage/coverage-final.json",
+					},
+				},
+			})
+		end,
+	},
 	{
 		"nvim-telescope/telescope-dap.nvim",
 	},
@@ -511,8 +575,9 @@ require("lazy").setup({
 				{ "<leader>r", group = "[R]ename" },
 				{ "<leader>s", group = "[S]earch" },
 				{ "<leader>w", group = "[W]orkspace" },
-				-- { "<leader>t", group = "[T]oggle" },
+				{ "<leader>T", group = "[T]oggle" },
 				{ "<leader>h", group = "Git [H]unk", mode = { "n", "v" } },
+				{ "<leader>C", group = "[C]Code Coverage" },
 			},
 		},
 	},
@@ -783,7 +848,7 @@ require("lazy").setup({
 					--
 					-- This may be unwanted, since they displace some of your code
 					if client and client.supports_method(vim.lsp.protocol.Methods.textDocument_inlayHint) then
-						map("<leader>th", function()
+						map("<leader>Th", function()
 							vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled({ bufnr = event.buf }))
 						end, "[T]oggle Inlay [H]ints")
 					end
